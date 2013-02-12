@@ -1,0 +1,1 @@
+A python class for crf++ Confusion Matrix and (Precision, Recall, F1 score)
