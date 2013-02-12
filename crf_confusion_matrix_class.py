@@ -17,11 +17,15 @@ class crf_confusion_matrix_class:
 	correct_label_pool = []
 	precision_label_pool = []
 	recall_label_pool = []
+	
 	accuracy_of_all_data = 0
 	del_synbol_const = "\t"
 	#
 	full_confusion_matrix_const = []
 	full_confusion_matrix = []
+	#
+	guess_correct = []
+	guess_wrong = []
 
 	def __init__(self,correct_label_pool = ["I-NP","B-NP","B-ADJP","I-ADJP"], filename = "final"):
 
@@ -49,14 +53,34 @@ class crf_confusion_matrix_class:
 				break
 			else:
 				if (line.replace("\n","")!=""):
-					data = line.replace("\n","").split("\t")
+					data_raw = line.replace("\n","")
+					data = data_raw.split("\t")
 					curr_correct_answer = data[len(data)-2]
 					curr_guess_label = data[len(data)-1]
+
+					if (curr_guess_label == curr_correct_answer):
+						self.guess_correct.append(data_raw)
+					else:
+						self.guess_wrong.append(data_raw)
 
 					for j in range(0,len(self.full_confusion_matrix_const)):
 						if (self.full_confusion_matrix_const[j] == curr_correct_answer + "_" + curr_guess_label):
 							self.full_confusion_matrix[j] = self.full_confusion_matrix[j] + 1
+	
+	# crf_result_correct_and_wrong_file_mapping
+	def crf_result_correct_and_wrong_file_mapping(self):
+		
+		f_guess_correct = open("f_guess_correct", "w")
+		for i in range(0,len(self.guess_correct)):
+			f_guess_correct.write(str(self.guess_correct[i]) + "\n")
+		f_guess_correct.close()
 
+		f_guess_wrong = open("f_guess_wrong", "w")
+		for i in range(0,len(self.guess_wrong)):
+			f_guess_wrong.write(str(self.guess_wrong[i]) + "\n")
+		f_guess_wrong.close()
+
+	# confusion_matrix_print_func
 	def confusion_matrix_print_func(self):
 		
 		#	ary[actual class][predicted class]
